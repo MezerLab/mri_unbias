@@ -1,4 +1,4 @@
-# MRI_UNBIAS
+# `MRI_UNBIAS`: Polynomial Bias Field Correction for MRI Data
 
 **Author:** Elior Drori
 **Lab:** Mezer Lab, The Hebrew University of Jerusalem
