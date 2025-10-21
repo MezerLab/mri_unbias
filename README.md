@@ -8,7 +8,7 @@
 
 ## Overview
 
-`mri_unbias` is a MATLAB function for estimating and correcting intensity bias fields in 3D MRI images.
+`mri_unbias` is a MATLAB function for estimating and correcting intensity bias fields in 3D brain MRI images.
 It fits an *n-th degree 3D polynomial* to voxel intensities within a region assumed to be uniform (typically a white-matter mask).
 This polynomial models the smooth spatial bias field that corrupts MRI signal intensity.
 The estimated bias is then used to correct the full image.
@@ -122,7 +122,7 @@ Higher degrees rarely provide substantial additional benefit and may begin to ov
 Thus:
 
 > The diagnostic plot is *complementary* to domain knowledge —
-> it can confirm that the practical, plausible range of **1–3 degrees** is already sufficient for most T1-weighted brain scans.
+> it can confirm that the practical, plausible range of **1–3 degrees** is already sufficient for most brain scans.
 
 If the diagnostic plot shows only marginal improvement beyond this range, degree 2 or 3 should be selected.
 
