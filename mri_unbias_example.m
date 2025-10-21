@@ -58,3 +58,37 @@ close(fig);
 
 fprintf('Outputs saved in: %s\n',out_dir);
 
+%% Diagnostics for polynomial degree selection
+% -------------------------------------------------------------------------
+% This script:
+%   1. Tests several polynomial degrees
+%   2. Runs bias correction using mri_unbias
+%   3. Measures WM intensity uniformity (std or CoV)
+%   4. Plots elbow analysis to pick optimal degree
+% -------------------------------------------------------------------------
+% --- Setup ---
+degrees = 1:6;            % range of polynomial degrees to test
+n_degrees = numel(degrees);
+std_vals = zeros(1, n_degrees);  % preallocate results
+
+% --- Loop over degrees ---
+for idx = 1:n_degrees
+    d = degrees(idx);
+    fprintf('\nTesting polynomial degree = %d\n', d);
+
+    % Run bias correction on this degree
+    [img_corr, ~] = mri_unbias(img, wm_mask, d);
+
+    % Extract intensities inside WM mask
+    wm_vals = img_corr(wm_mask);
+
+    % Compute metric: either std or CoV
+    std_vals(idx) = std(wm_vals(:));  % standard deviation
+    % OR for Coefficient of Variation:
+    % std_vals(idx) = std(wm_vals(:)) / mean(wm_vals(:));
+
+end
+
+% --- Elbow analysis (10% threshold default) ---
+fig = plot_degree_elbow_with_threshold(degrees, std_vals, 10);
+saveas(fig, fullfile(out_dir, 'diagnostics_polynomial_degree_selection.png'));
