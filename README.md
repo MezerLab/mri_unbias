@@ -142,9 +142,11 @@ If the diagnostic plot shows only marginal improvement beyond this range, degree
 
 ## Citation
 
-If you use this function in your research, please cite:
+This toolbox is first introduced in Drori et. al., 2026 (preprint). 
+If you use this toolbox in your research, please cite:
 
-> Drori, E., Mezer Lab, The Hebrew University of Jerusalem (2023).
-> *MRI_UNBIAS: Polynomial bias field correction for MRI data.*
+> Drori, E., Kurer, N., and Mezer, AA.
+> Sensorimotor basal ganglia circuit asymmetry explains lateralized motor dysfunction in early Parkinson's disease.
+> bioRxiv (2026)
 
 
