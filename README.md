@@ -60,12 +60,12 @@ Make sure both `polyfitn.m` and `polyvaln.m` are in your MATLAB path.
 ## Example Usage
 
 A complete example script is provided:
-`run_mri_unbias_example.m`
+`mri_unbias_example.m`
 
 ### Run it:
 
 ```matlab
-run_mri_unbias_example
+mri_unbias_example
 ```
 
 This example:
@@ -148,5 +148,4 @@ If you use this toolbox in your research, please cite:
 > Drori, E., Kurer, N., and Mezer, AA.
 > Sensorimotor basal ganglia circuit asymmetry explains lateralized motor dysfunction in early Parkinson's disease.
 > bioRxiv (2026)
-
 
