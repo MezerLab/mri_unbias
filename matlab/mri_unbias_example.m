@@ -1,4 +1,4 @@
-%% run_mri_unbias_example
+%% mri_unbias_example
 % Example script demonstrating MRI intensity bias correction using mri_unbias.
 clear; clc; close all;
 
@@ -6,7 +6,9 @@ fprintf('\n=== Running mri_unbias example script ===\n\n');
 
 % Load example data
 fprintf('Loading example data\n');
-example_dir = fullfile(fileparts(which('mri_unbias')),'example_data');
+repo_dir = fileparts(fileparts(which('mri_unbias')));
+example_dir = fullfile(repo_dir,'example_data');
+addpath(fullfile(fileparts(which('mri_unbias')),'diagnostics'));
 input_image_path = fullfile(example_dir,'t1_fl3d_FA30.nii.gz');
 wm_mask_path = fullfile(example_dir,'WM_mask.nii.gz');
 
@@ -21,7 +23,7 @@ poly_degree = 3; % Polynomial degree for white matter bias field
 
 % Prepare output directory
 fprintf('Writing output images and visualization figure.\n');
-out_dir = fullfile(example_dir,'output');
+out_dir = fullfile(example_dir,'output','matlab');
 if ~exist(out_dir,'dir')
     mkdir(out_dir);
 end

@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mri-unbias"
+version = "0.1.0"
+description = "Polynomial bias-field correction for 3D MRI images"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+  { name = "Elior Drori" }
+]
+dependencies = [
+  "numpy>=1.22"
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Medical Science Apps."
+]
+
+[project.optional-dependencies]
+io = ["nibabel>=5.0"]
+plots = ["matplotlib>=3.6"]
+test = ["pytest>=7.0"]
+all = ["nibabel>=5.0", "matplotlib>=3.6", "pytest>=7.0"]
+
+[project.scripts]
+mri-unbias = "mri_unbias.cli:main"
+mri-unbias-example = "mri_unbias.example:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mri_unbias"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
