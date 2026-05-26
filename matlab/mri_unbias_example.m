@@ -30,13 +30,15 @@ end
 
 % Save output images
 iminfo = niftiinfo(input_image_path);
+iminfo.Datatype = 'single';
+iminfo.BitsPerPixel = 32;
 
 out_names = compose('t1_fl3d_FA30_%s_poly%d.nii', ...
     ["unbiased"; "bias_estimation"], poly_degree);
 
-niftiwrite(img_corrected, fullfile(out_dir, out_names{1}), ...
+niftiwrite(single(img_corrected), fullfile(out_dir, out_names{1}), ...
     iminfo, 'Compressed', true);
-niftiwrite(bias_field, fullfile(out_dir, out_names{2}), ...
+niftiwrite(single(bias_field), fullfile(out_dir, out_names{2}), ...
     iminfo, 'Compressed', true);
 
 % Visualization

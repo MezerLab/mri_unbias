@@ -40,6 +40,7 @@ if ~exist('wm_mask','var') || isempty(wm_mask)
     wm_mask = true(size(img));
 end
 wm_mask = logical(wm_mask);
+img = double(img);
 
 fprintf('[MRI_UNBIAS]: Estimating and correcting biased image using %d-degree 3D polynomial...',poly_degree)
 

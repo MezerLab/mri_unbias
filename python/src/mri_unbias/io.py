@@ -37,11 +37,40 @@ def unbias_nifti(
     bias_field_path.parent.mkdir(parents=True, exist_ok=True)
 
     nib.save(
-        nib.Nifti1Image(corrected, image_nii.affine, image_nii.header),
+        _float32_nifti_like(corrected, image_nii, display_range=(0.0, 2.0)),
         str(corrected_path),
     )
     nib.save(
-        nib.Nifti1Image(bias_field, image_nii.affine, image_nii.header),
+        _float32_nifti_like(bias_field, image_nii),
         str(bias_field_path),
     )
     return corrected_path, bias_field_path
+
+
+def _float32_nifti_like(
+    data: np.ndarray,
+    reference_img,
+    *,
+    display_range: tuple[float, float] | None = None,
+):
+    try:
+        import nibabel as nib
+    except ImportError as exc:
+        raise ImportError("NIfTI I/O requires nibabel; install mri-unbias[io]") from exc
+
+    header = reference_img.header.copy()
+    header.set_data_dtype(np.float32)
+    header["scl_slope"] = 1
+    header["scl_inter"] = 0
+    if display_range is None:
+        finite = np.asarray(data)[np.isfinite(data)]
+        if finite.size:
+            display_range = tuple(float(x) for x in np.percentile(finite, [1, 99]))
+    if display_range is not None:
+        header["cal_min"] = display_range[0]
+        header["cal_max"] = display_range[1]
+    return nib.Nifti1Image(
+        np.asarray(data, dtype=np.float32),
+        reference_img.affine,
+        header,
+    )
