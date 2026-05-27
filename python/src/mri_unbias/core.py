@@ -12,6 +12,7 @@ def mri_unbias(
     mask: np.ndarray | None = None,
     degree: int = 3,
     *,
+    brain_mask: np.ndarray | None = None,
     eps: float | None = None,
     chunk_size: int = 1_000_000,
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -26,9 +27,16 @@ def mri_unbias(
         If omitted, all voxels are used.
     degree
         Total degree of the 3D polynomial model.
+    brain_mask
+        Optional boolean brain mask used only to stabilize the applied bias
+        field outside the brain. When provided, the raw polynomial bias field is
+        left unchanged inside the brain mask. Outside the brain mask, bias
+        values are clipped to the full min/max range observed inside the brain
+        mask. This avoids absurd extrapolated values outside the brain while
+        preserving all in-brain fitted bias values.
     eps
         Optional minimum absolute bias-field magnitude used during division.
-        If omitted, no clipping is applied.
+        If omitted, no minimum-denominator guard is applied.
     chunk_size
         Number of voxels to evaluate per chunk when building the full bias
         field. This limits peak memory use for large MRI volumes.
@@ -40,6 +48,8 @@ def mri_unbias(
     """
 
     bias_field = fit_bias_field(image, mask, degree, chunk_size=chunk_size)
+    if brain_mask is not None:
+        bias_field = clip_bias_field_outside_mask(bias_field, brain_mask)
     denominator = bias_field
     if eps is not None:
         if eps <= 0:
@@ -48,6 +58,26 @@ def mri_unbias(
     with np.errstate(divide="ignore", invalid="ignore"):
         corrected = np.asarray(image, dtype=np.float64) / denominator
     return corrected, bias_field
+
+
+def clip_bias_field_outside_mask(
+    bias_field: np.ndarray,
+    reference_mask: np.ndarray,
+) -> np.ndarray:
+    """Clip bias values outside ``reference_mask`` to the in-mask min/max range."""
+
+    bias_field = _as_3d_float(bias_field)
+    reference_mask = _validate_mask(reference_mask, bias_field.shape)
+    finite_reference = reference_mask & np.isfinite(bias_field)
+    if not np.any(finite_reference):
+        raise ValueError("brain_mask does not contain any finite bias-field voxels")
+
+    lower = np.nanmin(bias_field[finite_reference])
+    upper = np.nanmax(bias_field[finite_reference])
+    clipped = bias_field.copy()
+    outside = ~reference_mask
+    clipped[outside] = np.clip(clipped[outside], lower, upper)
+    return clipped
 
 
 def fit_bias_field(

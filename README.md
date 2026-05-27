@@ -118,6 +118,23 @@ wm_mask = mask_nii.get_fdata() > 0
 img_corrected, bias_field = mri_unbias(img, wm_mask, degree=3)
 ```
 
+Optional brain-mask stabilization:
+
+```python
+brain_mask = nib.load("brain_mask.nii.gz").get_fdata() > 0
+img_corrected, bias_field = mri_unbias(
+    img,
+    wm_mask,
+    degree=3,
+    brain_mask=brain_mask,
+)
+```
+
+Providing `brain_mask` does not change the polynomial fit. It restricts the
+applied bias-field range outside the brain to the full min/max bias range
+observed inside the brain mask. This is optional and mainly avoids absurd
+polynomial extrapolation values outside the brain.
+
 Command-line NIfTI workflow:
 
 ```bash
@@ -127,6 +144,18 @@ mri-unbias \
   --degree 3 \
   --corrected ../example_data/output/python/t1_fl3d_FA30_unbiased_poly3.nii.gz \
   --bias-field ../example_data/output/python/t1_fl3d_FA30_bias_estimation_poly3.nii.gz
+```
+
+With optional outside-brain bias stabilization:
+
+```bash
+mri-unbias \
+  image.nii.gz \
+  wm_mask.nii.gz \
+  --degree 3 \
+  --brain-mask brain_mask.nii.gz \
+  --corrected image_unbiased.nii.gz \
+  --bias-field image_bias.nii.gz
 ```
 
 Run the bundled example data from the source repository:

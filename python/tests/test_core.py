@@ -1,7 +1,12 @@
 import numpy as np
 import pytest
 
-from mri_unbias import fit_bias_field, mri_unbias, polynomial_powers
+from mri_unbias import (
+    clip_bias_field_outside_mask,
+    fit_bias_field,
+    mri_unbias,
+    polynomial_powers,
+)
 
 
 def test_polynomial_powers_total_degree():
@@ -46,3 +51,28 @@ def test_mask_shape_must_match_image():
 
     with pytest.raises(ValueError, match="mask shape"):
         mri_unbias(image, mask)
+
+
+def test_brain_mask_clips_bias_only_outside_mask():
+    image = np.ones((3, 3, 3))
+    mask = np.ones((3, 3, 3), dtype=bool)
+    brain_mask = np.zeros((3, 3, 3), dtype=bool)
+    brain_mask[1, :, :] = True
+    raw_bias = np.arange(27, dtype=float).reshape(3, 3, 3) - 10
+
+    clipped = clip_bias_field_outside_mask(raw_bias, brain_mask)
+    lower = raw_bias[brain_mask].min()
+    upper = raw_bias[brain_mask].max()
+
+    np.testing.assert_array_equal(clipped[brain_mask], raw_bias[brain_mask])
+    assert clipped[~brain_mask].min() >= lower
+    assert clipped[~brain_mask].max() <= upper
+
+    corrected, applied_bias = mri_unbias(
+        image,
+        mask,
+        degree=0,
+        brain_mask=np.ones((3, 3, 3), dtype=bool),
+    )
+    np.testing.assert_allclose(applied_bias, np.ones((3, 3, 3)))
+    np.testing.assert_allclose(corrected, np.ones((3, 3, 3)))

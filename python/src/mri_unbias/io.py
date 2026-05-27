@@ -16,6 +16,7 @@ def unbias_nifti(
     bias_field_path: str | Path,
     *,
     degree: int = 3,
+    brain_mask_path: str | Path | None = None,
 ) -> tuple[Path, Path]:
     """Run bias correction on NIfTI inputs and write corrected/bias outputs."""
 
@@ -29,7 +30,10 @@ def unbias_nifti(
 
     image = image_nii.get_fdata(dtype=np.float64)
     mask = mask_nii.get_fdata() > 0
-    corrected, bias_field = mri_unbias(image, mask, degree)
+    brain_mask = None
+    if brain_mask_path is not None:
+        brain_mask = nib.load(str(brain_mask_path)).get_fdata() > 0
+    corrected, bias_field = mri_unbias(image, mask, degree, brain_mask=brain_mask)
 
     corrected_path = Path(corrected_path)
     bias_field_path = Path(bias_field_path)

@@ -12,6 +12,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("image", help="Input 3D NIfTI image")
     parser.add_argument("mask", help="Binary homogeneous-region mask NIfTI")
     parser.add_argument("--degree", type=int, default=3, help="Polynomial degree")
+    parser.add_argument(
+        "--brain-mask",
+        help=(
+            "Optional brain mask used to clip only outside-brain bias values to "
+            "the full bias-field range observed inside the brain mask"
+        ),
+    )
     parser.add_argument("--corrected", required=True, help="Output corrected NIfTI path")
     parser.add_argument("--bias-field", required=True, help="Output bias-field NIfTI path")
     args = parser.parse_args(argv)
@@ -22,6 +29,7 @@ def main(argv: list[str] | None = None) -> int:
         args.corrected,
         args.bias_field,
         degree=args.degree,
+        brain_mask_path=args.brain_mask,
     )
     print(f"Wrote corrected image: {corrected_path}")
     print(f"Wrote bias field: {bias_field_path}")
