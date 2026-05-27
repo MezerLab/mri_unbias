@@ -15,8 +15,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--brain-mask",
         help=(
-            "Optional brain mask used to clip only outside-brain bias values to "
-            "the full bias-field range observed inside the brain mask"
+            "Optional brain mask for stabilizing outside-brain extrapolation; "
+            "leaves in-mask bias unchanged and clips outside-mask bias to the "
+            "in-mask min/max range."
         ),
     )
     parser.add_argument("--corrected", required=True, help="Output corrected NIfTI path")
