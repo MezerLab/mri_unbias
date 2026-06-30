@@ -1,7 +1,7 @@
 # `MRI_UNBIAS`: Polynomial Bias Field Correction for MRI Data
 
-**Author:** Elior Drori  
-**Lab:** Mezer Lab, The Hebrew University of Jerusalem  
+**Author:** Elior Drori
+**Lab:** Mezer Lab, The Hebrew University of Jerusalem
 **Year:** 2023
 
 ---
@@ -218,10 +218,10 @@ Higher degrees may begin to fit anatomical variability rather than true bias.
 
 ## Citation
 
-This toolbox is first introduced in Drori et. al., 2026 (preprint). If you use
+This toolbox is first introduced in Drori et al., 2026 (preprint). If you use
 this toolbox in your research, please cite:
 
-> Drori, E., Kurer, N., and Mezer, AA.  
+> Drori, E., Kurer, N., and Mezer, AA.
 > Sensorimotor basal ganglia circuit asymmetry explains lateralized motor
-> dysfunction in early Parkinson's disease.  
+> dysfunction in early Parkinson's disease.
 > bioRxiv (2026)
